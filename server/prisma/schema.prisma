@@ -1,0 +1,176 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+//Tables of database
+
+enum Rol {
+  Cliente
+  Encargado
+  Administrador
+}
+
+model Usuario {
+  id         Int      @id @default(autoincrement())
+  nombre     String
+  telefono   String
+  correo     String   @unique
+  direccion  String
+  nacimiento DateTime
+  contrasena String
+  rol        Rol      @default(Cliente)
+
+  SucursalId Int?
+  Sucursal   Sucursal? @relation(fields: [SucursalId], references: [id])
+
+  Factura Factura[]
+  estado  Boolean   @db.Bit(1) // Forzar el tipo de dato
+  Reserva Reserva[]
+}
+
+model Sucursal {
+  id          Int               @id @default(autoincrement())
+  nombre      String
+  descripcion String
+  telefono    String
+  direccion   String
+  correo      String
+  encargados  Usuario[]
+  Factura     Factura[]
+  estado      Boolean           @db.Bit(1) // Forzar el tipo de dato
+  reserva     Reserva[]
+  horarios    SucursalHorario[]
+}
+
+model Factura {
+  id             Int              @id @default(autoincrement())
+  fecha          DateTime         @default(now())
+  usuario        Usuario          @relation(fields: [usuarioId], references: [id])
+  usuarioId      Int
+  sucursal       Sucursal         @relation(fields: [sucursalId], references: [id])
+  sucursalId     Int
+  total          Decimal          @db.Decimal(10, 2)
+  FacturaDetalle FacturaDetalle[]
+  estado         Boolean          @db.Bit(1) // Forzar el tipo de dato
+}
+
+model Servicio {
+  id             Int              @id @default(autoincrement())
+  descripcion    String
+  precio         Decimal          @db.Decimal(10, 2)
+  duracion       String
+  beneficio      String
+  requerimiento  String
+  FacturaDetalle FacturaDetalle[]
+  estado         Boolean          @db.Bit(1) // Forzar el tipo de dato
+  Reserva        Reserva[]
+}
+
+model Categoria {
+  id          Int        @id @default(autoincrement())
+  descripcion String
+  Producto    Producto[]
+}
+
+model Producto {
+  id             Int              @id @default(autoincrement())
+  nombre         String
+  descripcion    String
+  categoria      Categoria        @relation(fields: [categoriaId], references: [id])
+  precio         Decimal          @db.Decimal(10, 2)
+  ingrediente    String
+  especificacion String
+  imagen         String
+  categoriaId    Int
+  FacturaDetalle FacturaDetalle[]
+  estado         Boolean          @db.Bit(1) // Forzar el tipo de dato
+}
+
+model FacturaDetalle {
+  id        Int     @default(autoincrement())
+  facturaId Int
+  factura   Factura @relation(fields: [facturaId], references: [id])
+
+  productoId Int?
+  producto   Producto? @relation(fields: [productoId], references: [id])
+
+  servicioId Int?
+  servicio   Servicio? @relation(fields: [servicioId], references: [id])
+
+  precio   Decimal @db.Decimal(10, 2)
+  cantidad Int
+  impuesto Decimal
+
+  // Clave primaria compuesta
+  @@id([id, facturaId])
+}
+
+model Estado {
+  id          Int       @id @default(autoincrement())
+  descripcion String
+  color       String
+  reserva     Reserva[]
+}
+
+model Reserva {
+  id          Int      @id @default(autoincrement())
+  descripcion String
+  fecha       DateTime
+  hora        String
+  habitos     String
+  historial   String
+  razon       String
+
+  estadoId Int
+  Estado   Estado? @relation(fields: [estadoId], references: [id])
+
+  usuarioId Int
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+
+  sucursalId Int
+  sucursal   Sucursal @relation(fields: [sucursalId], references: [id])
+
+  servicioId Int
+  servicio   Servicio @relation(fields: [servicioId], references: [id])
+}
+
+model Horario {
+  id          Int               @id @default(autoincrement())
+  diaSemana   DiaSemana
+  fecha       DateTime
+  horaInicio  String
+  horaFin     String
+  tipoHorario Boolean // 0 para horario de servicio, 1 para bloqueo
+  sucursal    SucursalHorario[]
+}
+
+model SucursalHorario {
+  id         Int      @id @default(autoincrement())
+  sucursalId Int
+  horarioId  Int
+  sucursal   Sucursal @relation(fields: [sucursalId], references: [id])
+  horario    Horario  @relation(fields: [horarioId], references: [id])
+
+  @@unique([sucursalId, horarioId])
+}
+
+enum DiaSemana {
+  Lunes
+  Martes
+  Miercoles
+  Jueves
+  Viernes
+  Sabado
+  Domingo
+}
