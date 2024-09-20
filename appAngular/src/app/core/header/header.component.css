@@ -1,0 +1,49 @@
+.nabvar {
+  padding: 40px;
+}
+
+.example-spacer {
+  flex: 1 1 auto;
+}
+.link-active {
+  font-weight: 800;
+  color: #26a69a;
+}
+.example-header-image {
+  background-image: url("/assets/images/logo.png");
+  background-size: cover;
+  height: 40px;
+  width: 40px;
+  padding: 15px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  object-fit: cover;
+  padding: 15px;
+}
+
+.example-header-image {
+  margin-right: 8px;
+}
+
+.example-spacer {
+  flex: 1 1 auto;
+}
+
+.mobile-menu-button {
+  display: none;
+}
+
+.desktop-menu {
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 600px) {
+  .desktop-menu {
+    display: none;
+  }
+
+  .mobile-menu-button {
+    display: inline-flex;
+  }
+}

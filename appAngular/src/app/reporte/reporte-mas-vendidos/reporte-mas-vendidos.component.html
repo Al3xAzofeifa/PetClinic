@@ -1,0 +1,84 @@
+<!-- <mat-card>
+  <mat-card-header>
+    <mat-card-title>Más Vendidos por Sucursal</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+   <ngx-charts-bar-horizontal
+[view]="view"
+[scheme]="colorScheme"
+  [results]="data2"
+  [gradient]="false"
+  [xAxis]="showXAxis"
+  [yAxis]="showYAxis"
+  [legend]="showLegend"
+  [showXAxisLabel]="showXAxisLabel"
+  [showYAxisLabel]="showYAxisLabel"
+  [xAxisLabel]="'Número de Ventas'"
+  [yAxisLabel]="'Servicios'"
+  [barPadding]="10"
+  [roundEdges]="true">
+</ngx-charts-bar-horizontal>
+  </mat-card-content>
+</mat-card> -->
+
+<mat-card>
+  <mat-card-header class="center">
+    <mat-card-title>Más Vendidos por Sucursal</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    
+    <div class="center">
+      <mat-form-field class="contenedor-25 ">
+        <mat-select
+          placeholder="Sucursal"
+          [(value)]="selectedSucursal"
+          (selectionChange)="onSucursalChange($event.value)"
+        >
+          <mat-option *ngFor="let item of sucursalList" [value]="item.id">
+            {{ item.nombre }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+<div class="row">
+    <!-- Gráfico de Servicios Más Vendidos -->
+    <div class="col">
+      <h3 class="center">Servicios Más Vendidos</h3>
+      <ngx-charts-bar-horizontal
+        [view]="view"
+        [scheme]="colorScheme"
+        [results]="serviceData"
+        [xAxis]="true"
+        [yAxis]="true"
+        [legend]="false"
+        [showXAxisLabel]="true"
+        [showYAxisLabel]="true"
+        [xAxisLabel]="'Número de Ventas'"
+        [yAxisLabel]="'Servicios'"
+        [roundEdges]="true"
+      >
+      </ngx-charts-bar-horizontal>
+    </div>
+
+    <!-- Gráfico de Productos Más Vendidos -->
+    <div class="col">
+      <h3 class="center">Productos Más Vendidos</h3>
+      <ngx-charts-bar-horizontal
+        [view]="view"
+        [scheme]="colorScheme"
+        [results]="productData"
+        [xAxis]="true"
+        [yAxis]="true"
+        [legend]="false"
+        [showXAxisLabel]="true"
+        [showYAxisLabel]="true"
+        [xAxisLabel]="'Número de Ventas'"
+        [yAxisLabel]="'Productos'"
+        [roundEdges]="true"
+      >
+      </ngx-charts-bar-horizontal>
+    </div>
+
+  </div>
+  </mat-card-content>
+</mat-card>
